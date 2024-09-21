@@ -1,1 +1,1 @@
-to be written
+start by `docker compose up --build` 
