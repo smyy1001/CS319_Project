@@ -9,13 +9,20 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "react-router-dom": "^6.24.1",
+    "@mui/material": "^5.16.0",
+    "@mui/x-date-pickers": "^5.0.0",
+    "@emotion/styled": "^11.6.0",
+    "@emotion/react": "^11.7.1",
+    "@mui/icons-material": "^5.2.3",
+    "axios": "^1.6.8"
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.17.12"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "HOST=0.0.0.0 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

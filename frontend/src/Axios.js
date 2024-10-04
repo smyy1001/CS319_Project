@@ -2,7 +2,7 @@ import axios from 'axios';
 console.log('Environment:', process.env.REACT_APP_NODE_ENV);
 console.log('API URL:', process.env.REACT_APP_API_URL);
 
-const { protocol, hostname } = window.location;
+// const { protocol, hostname } = window.location;
 let baseURL = '';
 
 baseURL = process.env.REACT_APP_API_URL;
