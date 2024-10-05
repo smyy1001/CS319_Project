@@ -16,7 +16,8 @@
     "@emotion/styled": "^11.6.0",
     "@emotion/react": "^11.7.1",
     "@mui/icons-material": "^5.2.3",
-    "axios": "^1.6.8"
+    "axios": "^1.6.8",
+    "antd": "^5.14.2"
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.17.12"
