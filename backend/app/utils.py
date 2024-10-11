@@ -14,6 +14,7 @@ from fastapi import Security
 import app.db.models as models
 from app.deps import get_db
 import app.schemas as schemas
+import bcrypt
 
 load_dotenv()
 SECRET_KEY = os.getenv("SECRET")
@@ -48,13 +49,27 @@ def create_access_token(data: dict):
     return encoded_jwt
 
 
+def hash_password(password: str) -> str:
+    password_bytes = password.encode("utf-8")
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(password_bytes, salt)
+    return hashed_password.decode("utf-8")
+
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    # Encode the plain password to bytes
+    plain_password_bytes = plain_password.encode("utf-8")
+    hashed_password_bytes = hashed_password.encode("utf-8")
+    # Check if the provided password, when hashed, matches the stored hash
+    return bcrypt.checkpw(plain_password_bytes, hashed_password_bytes)
+
+
 def authenticate_user(db: Session, username: str, password: str):
     user = db.query(models.User).filter(models.User.username == username).first()
-    if not user or password != user.password:
+    # if not user or password != user.password:
+    if not user:
         return False
-    # if not pwd_context.verify(
-    #     password, user.password
-    # ):
+    if not verify_password(password, user.password):
         return False
     return user
 

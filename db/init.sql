@@ -23,9 +23,11 @@ BEGIN
             username VARCHAR(255) UNIQUE NOT NULL,
             password VARCHAR(255) NOT NULL
         );
-        INSERT INTO users (username, password) VALUES ('SUMEYYE', '123asd123');
-        INSERT INTO users (username, password) VALUES ('ÖMER1', '123asd321');
-        INSERT INTO users (username, password) VALUES ('ÖMER2', '321asd123');
-        INSERT INTO users (username, password) VALUES ('FURKAN', 'asd123123');
+
+        -- All passwords are 123456!!!
+        INSERT INTO users (username, password) VALUES ('SUMEYYE', '$2b$12$aVbKUX/WxpmVwdzBKSR2B.ZmoRuJuOWDSDNYaOGeDwIx0cgKNm9WG');
+        INSERT INTO users (username, password) VALUES ('ÖMER1', '$2b$12$aVbKUX/WxpmVwdzBKSR2B.ZmoRuJuOWDSDNYaOGeDwIx0cgKNm9WG');
+        INSERT INTO users (username, password) VALUES ('ÖMER2', '$2b$12$aVbKUX/WxpmVwdzBKSR2B.ZmoRuJuOWDSDNYaOGeDwIx0cgKNm9WG');
+        INSERT INTO users (username, password) VALUES ('FURKAN', '$2b$12$aVbKUX/WxpmVwdzBKSR2B.ZmoRuJuOWDSDNYaOGeDwIx0cgKNm9WG');
     END IF;
 END $$;

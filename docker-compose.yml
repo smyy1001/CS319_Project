@@ -28,6 +28,7 @@ services:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${DOCKER_POSTGRES_PORT}/${POSTGRES_DATABASE}
     depends_on:
       - db
+      
   frontend:
     build: ./frontend
     container_name: frontend

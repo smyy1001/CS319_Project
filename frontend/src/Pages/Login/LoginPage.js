@@ -1,97 +1,202 @@
-import React from 'react';
-import { useNavigate, Link } from "react-router-dom";
-import { Form, Input, Button, message } from 'antd';
-import Axios from '../../Axios';
+import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
+import { message } from 'antd';
+import { useAuth } from '../../AuthProvider';
 import './LoginPage.css';
+import { TextField, Button, IconButton, InputAdornment } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import Link from '@mui/material/Link';
+
+const CustomTextField = styled(TextField)({
+    "& .MuiInput-underline:after": {
+        borderBottomColor: "black",
+    },
+    "& .MuiOutlinedInput-root": {
+        "& fieldset": {
+            borderColor: "black",
+        },
+        "&:hover fieldset": {
+            borderColor: "black",
+        },
+        "&.Mui-focused fieldset": {
+            borderColor: "black !important",
+        },
+        "& input:valid:focus + fieldset": {
+            borderColor: "black !important",
+        },
+    },
+    "& .MuiFilledInput-root": {
+        "&:before": {
+            borderBottomColor: "black",
+        },
+        "&:hover:before": {
+            borderBottomColor: "black",
+        },
+        "&:after": {
+            borderBottomColor: "black",
+        },
+        "&:hover fieldset": {
+            borderColor: "black",
+        },
+        "&.Mui-focused fieldset": {
+            borderColor: "black",
+        },
+    },
+    "& label.Mui-focused": {
+        color: "black",
+    },
+    "& label": {
+        color: "black",
+    },
+    "& .MuiInputBase-root": {
+        "&::selection": {
+            backgroundColor: "rgba(255, 255, 255, 0.99)",
+            color: "#241b19",
+        },
+        "& input": {
+            caretColor: "black",
+        },
+    },
+    "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+        borderColor: "black !important",
+    },
+    "& .MuiInputBase-input::selection": {
+        backgroundColor: "rgba(255, 255, 255, 0.99)",
+        color: "#241b19",
+    },
+});
+
+
+const CustomButton = styled(Button)({
+    "&.MuiButton": {
+        color: "black",
+        borderColor: "black",
+        "&:hover": {
+            borderColor: "red",
+            backgroundColor: "rgba(255, 255, 255, 0.1)", 
+        },
+        "&.Mui-focused": {
+            borderColor: "black !important", 
+        },
+        "&.Mui-disabled": {
+            borderColor: "rgba(255, 255, 255, 0.3)", 
+            color: "rgba(255, 255, 255, 0.3)",
+        },
+    },
+});
+
 
 function LoginPage() {
     const navigate = useNavigate();
+    const { login } = useAuth();
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
 
-    const onFinish = async (values) => {
-        const formData = new FormData();
-        formData.append('username', values.username);
-        formData.append('password', values.password);
-
-        const config = {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
-        };
-
-        try {
-            let result = await Axios.post('/api/auth/login', formData, config);
-            let accessToken = result.data.access_token;
-            localStorage.setItem("token", accessToken);
-            Axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-
-
-            try {
-                const loginResult = await Axios.get('/api/auth/me');
-                const user = loginResult.data;
-                localStorage.setItem("userId", user.id);
-                localStorage.setItem("user", JSON.stringify(user));
-
-                // const userDetailsResult = await Axios.get(`/api/auth/user_type/${user.user_id}`);
-                // const userDetails = userDetailsResult.data;
-                // localStorage.setItem("userType", userDetails.user_type);
-                localStorage.setItem("userType", 'user')
-
-                message.success('Login successful');
-                navigate('/home');
-            }
-            catch (error) {
-                console.error('User info failed', error);
-            }
-
-        }
-        catch (error) {
-            console.error('Login failed', error);
+    const onFinish = async () => {
+        // const userDetailsResult = await Axios.get(`/api/auth/user_type/${user.user_id}`);
+        // const userDetails = userDetailsResult.data;
+        // localStorage.setItem("userType", userDetails.user_type);
+        const success = await login(username, password);
+        if (success) {
+            message.success('Login successful');
+            navigate('/home');
+        } else {
             message.error('Username or password wrong');
-
         }
     };
 
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
+
     return (
-        <div className='login-page-outer-class'>
-            <div className='login-page-header'>
-                MeetBilkent
+        <div className='login-page-outer-container'>
+
+            <div className='login-page-img-container'>
+                <div class='picture'>
+                    <div class='overlay'></div>
+                    <div class='content'>
+                        <div style={{ textAlign: 'left' }}>
+                            <span style={{ fontSize: '80px', fontWeight: 'bold' }}>Merhaba!</span><br />
+                            <span style={{ fontSize: '60px' }} >Okulunu Bilkent'le tanıştırmak ve çok daha fazlası için kayıt ol!</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <Form
-                name="normal_login"
-                className="login-form"
-                initialValues={{ remember: true }}
-                onFinish={onFinish}
-            >
-                <Form.Item
-                    name="username"
-                    rules={[{ required: true, message: 'Please input your username!' }]}
-                >
-                    <Input placeholder="username" />
-                </Form.Item>
-                <Form.Item
-                    name="password"
-                    rules={[{ required: true, message: 'Please input your Password!' }]}
-                >
-                    <Input
-                        type="password"
-                        placeholder="password"
-                    />
-                </Form.Item>
-                <Form.Item>
-                    <Button type="primary" htmlType="submit" className="login-form-button" style={{ width: '100%' }}>
-                        Log in
-                    </Button>
-                </Form.Item>
-                <div style={{ textAlign: 'center' }}>
-                    Register as:
-                    <Link to="/register/school"> School Representative</Link> or
-                    <Link to="/register/member"> Member</Link>
+
+            <div className='register-and-login-containers'>
+
+                <div className='login-form-container'>
+
+                    <div className='login-page-form-header'>
+                        Meet<span className='bilkent-header-style'>Bilkent</span>
+                    </div>
+
+                    <div className='login-form'>
+                        <CustomTextField
+                            autoComplete="off"
+                            label="Kullanıcı Adı ya da e-posta"
+                            value={username}
+                            fullWidth
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
+                        <CustomTextField
+                            autoComplete="off"
+                            label="Şifre"
+                            fullWidth
+                            type={showPassword ? 'text' : 'password'}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={togglePasswordVisibility}
+                                        >
+                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                )
+                            }}
+                        />
+                        <CustomButton className="login-form-button" onClick={() => onFinish()}>
+                            Giriş Yap
+                        </CustomButton>
+                    </div>
+
+                    <div className='login-form-footer'>
+                        <div style={{ display: 'flex', flexDirection: 'row', gap: '10%', alignItems: 'center', justifyContent: 'center', zIndex: '5' }}>
+                            <hr style={{ color: 'black', backgroundColor: 'black', width: '150px', height: '0.1rem' }} />
+                            yada
+                            <hr style={{ color: 'black', backgroundColor: 'black', width: '150px', height: '0.1rem' }} />
+                        </div>
+
+                        <div className='google-login'>
+                            <CustomButton>
+                                <img className='google-icon' src="/google-icon.svg" alt="Continue with Google" />
+                                <div style={{ color: 'black' }}>Google ile Devam Et</div>
+                            </CustomButton>
+                        </div>
+                        <br />
+                        <Link className='forgot-password' href="/forgot-password" color="inherit">
+                            Şifreni mi unuttun?
+                        </Link>
+                    </div>
                 </div>
 
-            </Form>
+                <div className='register-link-container'>
+                    <div className='register-link'>
+                        Hesabın yok mu? <Link className='register-link-class' href="/register" color="inherit">Kayıt Ol!</Link>
+                    </div>
+                </div>
+            </div>
+
         </div>
     );
 }
-
 
 export default LoginPage;
