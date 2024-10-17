@@ -7,14 +7,12 @@ from sqlalchemy.orm import Session
 from dotenv import load_dotenv
 # from pydantic import UUID4
 from uuid import UUID
-from passlib.context import CryptContext
 from jose import jwt, JWTError
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi import Security
 import app.db.models as models
 from app.deps import get_db
 import app.schemas as schemas
-import bcrypt
 
 load_dotenv()
 SECRET_KEY = os.getenv("SECRET")
@@ -39,8 +37,16 @@ def check_postgres_connection():
 
 
 # Security
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
+
+
+def hash_password(password: str) -> str:
+    return password_context.hash(password)
+
+
+def verify_password(password: str, hashed_pass: str) -> bool:
+    return password_context.verify(password, hashed_pass)
 
 
 def create_access_token(data: dict):
@@ -49,19 +55,6 @@ def create_access_token(data: dict):
     return encoded_jwt
 
 
-def hash_password(password: str) -> str:
-    password_bytes = password.encode("utf-8")
-    salt = bcrypt.gensalt()
-    hashed_password = bcrypt.hashpw(password_bytes, salt)
-    return hashed_password.decode("utf-8")
-
-
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    # Encode the plain password to bytes
-    plain_password_bytes = plain_password.encode("utf-8")
-    hashed_password_bytes = hashed_password.encode("utf-8")
-    # Check if the provided password, when hashed, matches the stored hash
-    return bcrypt.checkpw(plain_password_bytes, hashed_password_bytes)
 
 
 def authenticate_user(db: Session, username: str, password: str):

@@ -1,4 +1,4 @@
-.login-page-outer-container {
+.register-page-outer-container {
     height: 100vh;
     display: flex;
     flex-direction: row;
@@ -6,7 +6,7 @@
     align-items: center;
 }
 
-.login-page-img-container {
+.register-page-img-container {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -14,7 +14,7 @@
     height: 100%;
 }
 
-.picture {
+.register-picture {
     margin-left: 40px;
     width: 50%;
     height: 75%;
@@ -48,20 +48,21 @@
     height: 100%;
 }
 
-.register-and-login-containers {
+.register-choice-containers {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 60px;
+    gap: 5%;
     width: 100%;
     height: 100%;
 }
 
-.login-form-container {
+
+.register-container {
     margin-right: 40px;
     width: 50%;
-    height: 60%;
+    height: 40%;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -72,13 +73,14 @@
     box-shadow: 15px 15px 8px rgba(0, 0, 0, 0.5);
 }
 
-.login-page-form-header {
-    margin-top: 60px;
+.register-page-form-header {
+    margin-top: 15%;
     font-size: 40px;
     font-weight: bold;
     color: black;
     z-index: 5;
 }
+
 
 .bilkent-header-style {
     font-size: '24px';
@@ -86,87 +88,32 @@
     color: #ec2f38;
 }
 
-.login-form {
-    margin-top: 50px;
+
+.register-button-container {
+    margin-top: 10%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 12px;
+    gap: 30px;
     width: 70%;
 }
 
-.login-form-button {
+.register-container-button {
     width: 100%;
-    height: 50px;
+    height: 60px;
     background-color: #ec2f38 !important;
     color: white !important;
     border: none;
-    border-radius: 5px;
+    border-radius: 5px !important;
     font-size: 16px !important;
     font-weight: bold !important;
     cursor: pointer;
 }
 
-.login-form-button:hover {
-    background-color: #db9397 !important;
-}
-
-.login-form-footer {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.login-page-footer-outer-cont {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-    align-items: center;
-    justify-content: center;
-    z-index: 5;
-}
 
 
-.google-login {
-    margin-top: 15px;
-    width: max-content;
-    height: 40px;
-    background-color: white !important;
-    color: black !important;
-    border: none;
-    border-radius: 24px;
-    font-size: 16px !important;
-    font-weight: bold !important;
-    cursor: pointer;
-    outline-style: solid !important;
-    outline-width: 0.15rem !important;
-    outline-color: rgb(155, 155, 155) !important;
-    z-index: 5;
-}
-
-.google-icon {
-    width: 30px !important;
-    height: 30px !important;
-    margin-right: 10px !important;
-}
-
-.google-login:hover {
-    cursor: pointer;
-    background-color: #f3f3f3 !important;
-}
-
-.forgot-password {
-    color: black !important;
-    font-size: 16px !important;
-    font-weight: bold !important;
-    cursor: pointer !important;
-}
-
-
-.register-link-container {
+.login-link-container {
     margin-right: 40px;
     width: 50%;
     height: 10%;
@@ -174,7 +121,7 @@
     outline-width: 0.15rem;
 }
 
-.register-link {
+.login-link {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -188,7 +135,7 @@
     font-size: 16px;
 }
 
-.register-link-class {
+.login-link-class {
     color: #e9686f !important;
     font-weight: bold !important;
     cursor: pointer;

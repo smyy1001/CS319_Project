@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
     }, [user]);
 
     const login = async (username, password) => {
-        const formData = new FormData();
+        const formData = new URLSearchParams();
         formData.append('username', username);
         formData.append('password', password);
 

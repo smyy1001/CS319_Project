@@ -13,6 +13,8 @@ def login(
     form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
 ):
     user = authenticate_user(db, form_data.username, form_data.password)
+    print("username", form_data.username)
+    print("password", form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

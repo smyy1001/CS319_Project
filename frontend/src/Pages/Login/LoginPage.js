@@ -101,10 +101,10 @@ function LoginPage() {
         // localStorage.setItem("userType", userDetails.user_type);
         const success = await login(username, password);
         if (success) {
-            message.success('Login successful');
+            message.success('Oturum açıldı!');
             navigate('/home');
         } else {
-            message.error('Username or password wrong');
+            message.error('E-mail veya şifre hatalı!');
         }
     };
 
@@ -116,9 +116,9 @@ function LoginPage() {
         <div className='login-page-outer-container'>
 
             <div className='login-page-img-container'>
-                <div class='picture'>
-                    <div class='overlay'></div>
-                    <div class='content'>
+                <div className='picture'>
+                    <div className='overlay'></div>
+                    <div className='content'>
                         <div style={{ textAlign: 'left' }}>
                             <span style={{ fontSize: '80px', fontWeight: 'bold' }}>Merhaba!</span><br />
                             <span style={{ fontSize: '60px' }} >Okulunu Bilkent'le tanıştırmak ve çok daha fazlası için kayıt ol!</span>
@@ -169,7 +169,7 @@ function LoginPage() {
                     </div>
 
                     <div className='login-form-footer'>
-                        <div style={{ display: 'flex', flexDirection: 'row', gap: '10%', alignItems: 'center', justifyContent: 'center', zIndex: '5' }}>
+                        <div className='login-page-footer-outer-cont'>
                             <hr style={{ color: 'black', backgroundColor: 'black', width: '150px', height: '0.1rem' }} />
                             yada
                             <hr style={{ color: 'black', backgroundColor: 'black', width: '150px', height: '0.1rem' }} />
