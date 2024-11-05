@@ -24,11 +24,10 @@ const AppBarComponent = () => {
                         </Link>
                     </Tooltip>
                 )}
-                {!location.pathname.startsWith('/register') && location.pathname !== '/login' &&
-                    <Toolbar className="styled-right-toolbar">
-                        <Navigation />
-                    </Toolbar>
-                }
+                <Toolbar className="styled-right-toolbar">
+                    <Navigation />
+                </Toolbar>
+
             </Toolbar>
         </AppBar>
     );

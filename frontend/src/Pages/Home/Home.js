@@ -93,7 +93,7 @@ const CustomButton = styled(Button)({
     },
 });
 
-function Home() {
+function Home({role}) {
     const [users, setUsers] = useState([]);
     const [editUserId, setEditUserId] = useState(null); // Track the user being edited
     const [password, setPassword] = useState("");

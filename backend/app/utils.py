@@ -59,9 +59,26 @@ def create_access_token(data: dict):
 
 def authenticate_user(db: Session, username: str, password: str):
     user = db.query(models.User).filter(models.User.username == username).first()
-    # if not user or password != user.password:
     if not user:
         return False
+
+    advisor = db.query(models.Advisor).filter(models.Advisor.user_id == user.id).first()
+    guide = db.query(models.Guide).filter(models.Guide.user_id == user.id).first()
+    school = db.query(models.School).filter(models.School.user_id == user.id).first()
+
+    role = 'guide'
+
+    if advisor:
+        role = 'advisor'
+    elif guide:
+        role = 'guide'
+    elif school:
+        role = 'school'
+    else:
+        role = 'basic'
+
+    user.role = role
+
     if not verify_password(password, user.password):
         return False
     return user

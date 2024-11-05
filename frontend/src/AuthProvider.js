@@ -34,6 +34,7 @@ export const AuthProvider = ({ children }) => {
             const response = await Axios.post('/api/auth/login', formData, config);
             let accessToken = response.data.access_token;
             localStorage.setItem("token", accessToken);
+            localStorage.setItem("role", response.data.role);
             Axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
             const data = await Axios.get('/api/auth/me');
             if (data) {
@@ -51,6 +52,7 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         localStorage.removeItem('user');
         localStorage.removeItem('token');
+        localStorage.removeItem('role');
         setUser(null);
     };
 

@@ -1,0 +1,88 @@
+.school-register-page-outer-container{ 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    gap:100px;
+    
+}
+.progress-container{
+    width: 60%;
+    height:30px;
+}
+.progress-bar{
+    width:100% !important;
+    height:100% !important;
+    border-radius:0% !important;
+    /* background-color: red !important; */
+    color: white !important;
+
+    display: flex !important;
+    justify-content: center !important;
+    align-items:center !important;
+}
+
+.btn{
+    background-color: red !important; 
+    padding:10px 25px !important;
+    color:white !important;
+}
+
+.container.okul-adi{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;   
+    gap:10px
+}
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    max-width: 400px;
+    text-align: center;
+}
+.toast-bottom-right {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1050;
+}
+
+.textfield{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;   
+    width:100%;
+    gap:10px;
+}
+
+.step{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:20px;
+}
+
+.buttons{
+    display:flex;
+    flex-direction:row;
+    justify-content:center;
+    align-items:center;
+    gap:150px
+}

@@ -13,6 +13,7 @@ router = APIRouter()
 # from the frontend the methods will be reached like: /api/{tableName}/{method}
 # for example: /api/users/add, /api/users/delete/{user_id}, /api/users/all
 
+# add user
 @router.post("/add/", response_model=schemas.User)
 def create_sistem(user: schemas.UserCreate, db: Session = Depends(get_db)):
     # check if the name is unique
@@ -33,6 +34,7 @@ def create_sistem(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db.refresh(db_user)
     return db_user
 
+# change password
 # possible improvements : password validation only checks if password kength >=8, we can add more of this.
 @router.post("/change_password/{user_id}", response_model=schemas.User)
 def change_password(user_id: UUID4, old_password: str, new_password: str, db: Session = Depends(get_db)):
@@ -65,7 +67,7 @@ def change_password(user_id: UUID4, old_password: str, new_password: str, db: Se
         raise HTTPException(status_code=500, detail="Şifre değiştirme işlemi başarısız oldu")
     return db_user
 
-
+# remove user by id
 @router.delete("/delete/{user_id}", response_model=schemas.User)
 def delete_sistem(user_id: UUID4, db: Session = Depends(get_db)):
     db_user = db.query(models.User).filter(models.User.id == user_id).first()
@@ -75,7 +77,7 @@ def delete_sistem(user_id: UUID4, db: Session = Depends(get_db)):
     db.commit()
     return db_user
 
-
+# remove by username
 @router.delete("/delete/username/{username}", response_model=schemas.User)
 def delete_with_username(username: str, db: Session = Depends(get_db)):
     db_user = db.query(models.User).filter(models.User.username == username).first()
@@ -85,10 +87,20 @@ def delete_with_username(username: str, db: Session = Depends(get_db)):
     db.commit()
     return db_user
 
-
+# show all
 # from the frontend the get methods will be reached like: localhost:8000/api/{tableName}/{method}
 # for example: localhost:8000/api/users/all
 @router.get("/all/", response_model=List[schemas.User])
 def get_all_sistems(db: Session = Depends(get_db)):
     users = db.query(models.User).all()
     return users
+
+#TODO show just one
+@router.get("/show/{user_id}", response_model=schemas.User)
+def show_user(user_id: UUID4, db: Session = Depends(get_db)):
+    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+    if not db_user:
+        raise HTTPException(
+            status_code=404, detail=f"User id si {user_id} olan bir user bulunamadı."
+        )
+    return db_user

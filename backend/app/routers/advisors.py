@@ -6,11 +6,13 @@ import app.schemas as schemas
 from app.utils import hash_password
 from pydantic import UUID4
 from typing import List
-
+import logging
+# Configure logging
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 router = APIRouter()
 
-
+#add adviser
 @router.post("/add/", response_model=schemas.Advisor)
 def create_advisor(advisor: schemas.AdvisorCreate, db: Session = Depends(get_db)):
     # check if the advisor exists (e.g., based on email or other unique field)
@@ -32,68 +34,7 @@ def create_advisor(advisor: schemas.AdvisorCreate, db: Session = Depends(get_db)
     db.refresh(db_advisor)
     return db_advisor
 
-
-# CONCERNS
-# tourların default confirmation ı "PENDING" olmalı
-
-# adviser accept, reject ve Dilek Hoca accept reject edebiliyor, bunlara göre confirmation state değişiyor 4 tane metod ediyor her biri için
-# bütün bunlar sadece tour için bi de, id ler unique değil dolayısıyla ortak alırsak bilemiyoruz hangisi olduğunu, bu da tour ya da indiv.tour ya da fairs yani 3 durum demek
-# 12 farklı metod oluyor herhangi bir efficiency önerisi olan var mı
-
-#ayrıca confirmation ları string olarka check etmek baya Error Prone duruyor. confirmation == "PENDING" gibi.
-
-# notes adviser'ın Dilek hocaya attığı not gibi bişi
-@router.post("/accept_tour/{tour_id}", response_model=schemas.Tour)
-def accept_form(tour_id: UUID4, notes:str, db: Session = Depends(get_db)):
-    # get the form  with id
-    db_tour = db.query(models.Tour).filter(models.Tour.id == tour_id).first()
-    #if form not found, throw error
-    if not db_tour:
-        raise HTTPException(status_code=400, detail=f'id\'si = {tour_id} olan tur bulunamadı.')
-    #if form is already confirmed or passed throw error
-    if db_tour.confirmation != "PENDING": # error prone
-        raise HTTPException(status_code=400, detail="Tur daha önceden değerlendirilmiş")
-     
-    # adviser accepts the form.
-    db_tour.confirmation = "BTO ONAY"
-    db_tour.notes = notes
-     # Commit the changes to the database
-    try:
-        db.commit()
-        db.refresh(db_tour)  
-    except Exception as e:
-        db.rollback()  # Roll back the session in case of an error
-        raise HTTPException(status_code=500, detail="Tur onaylama işlemi başarısız oldu")
-
-    return db_tour
-
-# yukarıdakine baya benziyor sadece confirmation BTO RET oluyor
-@router.post("/reject_tour/{tour_id}", response_model=schemas.Tour)
-def accept_form(tour_id: UUID4, notes:str, db: Session = Depends(get_db)):
-    # get the form  with id
-    db_tour = db.query(models.Tour).filter(models.Tour.id == tour_id).first()
-    #if form not found, throw error
-    if not db_tour:
-        raise HTTPException(status_code=400, detail=f'id\'si = {tour_id} olan tur bulunamadı.')
-    #if form is already confirmed or passed throw error
-    if db_tour.confirmation != "PENDING": # error prone
-        raise HTTPException(status_code=400, detail="Tur daha önceden değerlendirilmiş")
-     
-    # adviser rejects the form.
-    db_tour.confirmation = "BTO RET"
-    db_tour.notes = notes
-    
-     # commit the changes to the database
-    try:
-        db.commit()
-        db.refresh(db_tour)  
-    except Exception as e:
-        db.rollback()  # Roll back the session in case of an error
-        raise HTTPException(status_code=500, detail="Tur ret işlemi başarısız oldu")
-
-    return db_tour
-
-
+#remove adviser
 @router.delete("/delete/{advisor_id}", response_model=schemas.Advisor)
 def delete_advisor(advisor_id: UUID4, db: Session = Depends(get_db)):
     db_advisor = (
@@ -105,8 +46,49 @@ def delete_advisor(advisor_id: UUID4, db: Session = Depends(get_db)):
     db.commit()
     return db_advisor
 
+#TODO show adviser with id
+#show adviser
+@router.get("/show/{adviser_id}", response_model=schemas.Advisor)
+def show_adviser(adviser_id: UUID4, db: Session = Depends(get_db)):
+    #get all the advisers
+    db_adviser = db.query(models.Advisor).filter(models.Advisor.id == adviser_id).first()
+   
+    if not db_adviser:
+        logging.debug("adviser is not found.")
+        raise HTTPException(
+            status_code=404, detail=f"Verilen adviser_id = {adviser_id} ile bir adviser bulunamadı."
+        )
 
+    return db_adviser
+
+
+
+
+#show all advisers
 @router.get("/all/", response_model=List[schemas.Advisor])
 def get_all_advisors(db: Session = Depends(get_db)):
     advisors = db.query(models.Advisor).all()
     return advisors
+
+
+
+#TODO edit adviser
+@router.put("/edit/{adviser_id}", response_model=schemas.Advisor)
+def edit_profile(
+    adviser_id: UUID4, adviser: schemas.AdvisorBase, db: Session = Depends(get_db)
+):
+    db_advisor = db.query(models.Advisor).filter(models.Advisor.id == adviser_id).first()
+    if not db_advisor:
+        raise HTTPException(status_code=404, detail=f"Bu id({adviser_id}) ile bir adviser bulunamadı.")
+    for key, value in adviser.dict(exclude_unset=True).items():
+        setattr(db_advisor, key, value)
+    db.commit()  # Save changes
+    db.refresh(db_advisor)  # refresh the adviser to get the update
+    logging.debug(f"Adviser with id {adviser_id} has been updated.")
+    return db_advisor
+
+
+
+
+
+

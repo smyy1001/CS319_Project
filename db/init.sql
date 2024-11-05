@@ -54,11 +54,14 @@ BEGIN
     ) THEN
         CREATE TABLE  advisors (
             id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            user_id UUID REFERENCES users(id) ON DELETE CASCADE,--added
             age INTEGER,
             name VARCHAR(255),
             username VARCHAR(255) UNIQUE,
             password VARCHAR(255), -- to be hashed
-            responsible_day VARCHAR(255), -- specific day responsibility, each adviser is responsible for a specific weekday (e.g. Perşembe)
+            responsible_day VARCHAR(255)[], -- specific day responsibility, PAZARTESİ SALI ÇARŞAMBA PERŞEMBE CUMA CUMARTESİ PAZAR each adviser is responsible for a specific weekday (e.g. Perşembe, cuma)
+            --'PAZARTESİ' 'SALI' 'ÇARŞAMBA' 'PERŞEMBE' 'CUMA' 'CUMARTESİ' 'PAZAR'
+            --------------------- GÜNLERI INGILIZCE GÖNDERELIM BACKENDE
             phone VARCHAR(255),
             email VARCHAR(255),
             profile_picture_url VARCHAR(255),
@@ -80,6 +83,7 @@ BEGIN
     ) THEN
         CREATE TABLE guides (
             id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            user_id UUID REFERENCES users(id) ON DELETE CASCADE,
             name VARCHAR(255),
             username VARCHAR(255) UNIQUE,
             password VARCHAR(255),
@@ -107,14 +111,15 @@ BEGIN
     ) THEN
         CREATE TABLE fairs (
             id SERIAL PRIMARY KEY,
-            date Date, -- e.g., 24 August Thursday
+            date TIMESTAMP, -- e.g., 24 August Thursday
             hour VARCHAR(255), -- e.g. 13.00
             high_school_name VARCHAR(255),
             city VARCHAR(255),
             guide_count INTEGER,
-            guide_1_id UUID REFERENCES guides(id),
-            guide_2_id UUID REFERENCES guides(id),
-            guide_3_id UUID REFERENCES guides(id),
+            -- guide_1_id UUID REFERENCES guides(id),
+            -- guide_2_id UUID REFERENCES guides(id),
+            -- guide_3_id UUID REFERENCES guides(id),
+            guides UUID[],
             confirmation VARCHAR(255) DEFAULT 'PENDING', -- fair larda direk ONAY RET var sadece
             notes VARCHAR(255)
         );
@@ -129,14 +134,13 @@ BEGIN
     ) THEN
         CREATE TABLE individual_tours (
             id SERIAL PRIMARY KEY,
-            date Date, -- e.g., 24 August Thursday
-            daytime VARCHAR(255), -- (e.g. 13.00)
-            visitor_name VARCHAR(255),
+            date TIMESTAMP, -- e.g., 24 August Thursday
+            daytime VARCHAR(255), -- (e.g. 13.00) --------------------------------------------------------------BUNA GEREK YOK
+            high_school_name VARCHAR(255), -- should be optional            visitor_name VARCHAR(255),
             visitor_email VARCHAR(255),
             visitor_phone VARCHAR(255),
             visitor_count INTEGER, -- should it be 1 student? should we keep this?
-            assigned_guide_id UUID REFERENCES guides(id),
-            tour_type VARCHAR(255), -- e.g., Campus Tour, Admission Tour
+            --assigned_guide_id UUID REFERENCES guides(id), artık gerek yok demiştik
             notes VARCHAR(255)
         );
     END IF;
@@ -150,11 +154,18 @@ BEGIN
     ) THEN
         CREATE TABLE schools (
             id SERIAL PRIMARY KEY,
+            user_id UUID REFERENCES users(id) ON DELETE CASCADE,
             school_name VARCHAR(255),
+            city VARCHAR(255),
             email VARCHAR(255),
             password VARCHAR(255), -- to be encoded
             rate INTEGER, -- rate € [1,10], ranking not visible to users, 
+            user_name VARCHAR(255),
+            user_role  VARCHAR(255), -- teacher etc.
+            user_phone VARCHAR(255),
             notes VARCHAR(255)
+            
+            --city !!!
         );
     END IF;
 
@@ -171,13 +182,13 @@ BEGIN
             confirmation VARCHAR(255) DEFAULT 'PENDING', -- PENDING, BTO ONAY (Adviser), BTO IPTAL (Adviser), ONAY (Dilek hoca onay), TUR IPTAL (Dilek hoca ret)
             high_school_name VARCHAR(255),
             city VARCHAR(255),
-            date Date, -- e.g., 24 August Thursday
-            daytime VARCHAR(255), -- e.g., 13.00
+            date TIMESTAMP, -- e.g., 24 August Thursday
+            daytime VARCHAR(255), -- e.g., 13.00 -------------------------------BUNA GEREK YOK!!!
             student_count INTEGER, -- note, additional guides for > 60
             teacher_name VARCHAR(255),
             teacher_phone_number VARCHAR(255),
             salon VARCHAR(255), -- e.g., Mithat Çoruh or empty
-            form_sent_date Date, -- tour date should be at least 2 weeks after the form sent date.
+            form_sent_date TIMESTAMP, -- tour date should be at least 2 weeks after the form sent date.
             guide_id UUID REFERENCES guides(id),
             notes VARCHAR(255)
         );
@@ -193,7 +204,7 @@ BEGIN
         CREATE TABLE puantaj (
             id SERIAL PRIMARY KEY,
             guide_id UUID REFERENCES guides(id) ON DELETE CASCADE,
-            date DATE, -- the date of attendance or work 
+            date TIMESTAMP, -- the date of attendance or work 
             time_in TIME, -- when the guide started e.g. 13.00
             time_out TIME, -- when the guide ended e.g. 15.30 guide will write this
             notes VARCHAR(255) -- any additional notes
@@ -210,7 +221,61 @@ BEGIN
         CREATE TABLE guides_tours (
             guide_id UUID REFERENCES guides(id) ON DELETE CASCADE,
             tour_id INTEGER REFERENCES tours(id) ON DELETE CASCADE,
+            status VARCHAR(255), -- can be REQUESTED or ASSIGNED
             PRIMARY KEY (guide_id, tour_id)
+        );
+    END IF;
+
+    -- GUIDES_FAIRS junction table (Many-to-Many)
+    IF NOT EXISTS (
+        SELECT 1
+        FROM information_schema.tables
+        WHERE table_schema = 'public'
+        AND table_name = 'guides_fairs'
+    ) THEN
+        CREATE TABLE guides_fairs (
+            guide_id UUID REFERENCES guides(id) ON DELETE CASCADE,
+            fair_id INTEGER REFERENCES fairs(id) ON DELETE CASCADE,
+            status VARCHAR(255), -- can be REQUESTED or ASSIGNED
+            PRIMARY KEY (guide_id, fair_id)
+        );
+    END IF;
+
+    -- ADDED admin table
+    IF NOT EXISTS (
+    SELECT 1
+    FROM information_schema.tables
+    WHERE table_schema = 'public'
+    AND table_name = 'admins'
+) THEN
+    CREATE TABLE admins (
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        user_id UUID REFERENCES users(id) ON DELETE CASCADE, -- Links admin to a user
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        phone VARCHAR(255),
+        role VARCHAR(50) DEFAULT 'Coordinator', -- or Örsan Örge, pr Dilek Hanım
+        start_date DATE,
+        end_date DATE, -- if ended
+        is_active BOOLEAN DEFAULT TRUE,
+        notes TEXT
+    );
+END IF;
+
+-- ADDED -- NOTIFICATIONS table (One-to-Many with guides)
+
+    IF NOT EXISTS (
+        SELECT 1
+        FROM information_schema.tables
+        WHERE table_schema = 'public'
+        AND table_name = 'notifications'
+    ) THEN
+        CREATE TABLE notifications (
+            id SERIAL PRIMARY KEY,
+            guide_id UUID REFERENCES guides(id) ON DELETE CASCADE, -- Foreign key to guides table
+            message TEXT NOT NULL,                                -- Notification message
+            seen BOOLEAN DEFAULT FALSE,                           -- Status of the notification (seen/unseen)
+            created_at TIMESTAMP DEFAULT NOW()                    -- When the notification was created
         );
     END IF;
 

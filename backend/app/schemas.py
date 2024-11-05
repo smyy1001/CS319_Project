@@ -1,12 +1,16 @@
 from pydantic import BaseModel, UUID4, Field
 from typing import List, Optional, Dict
-from datetime import date, time
+from datetime import date, datetime, time
 
-
+# Optionals are added in dates. Otherwise Put/Patch requests require date entry, 2 routes would have to be called in that case. 
+# notes body
+class NotesUpdate(BaseModel):
+    notes: Optional[str] = None
+    
 # Example
 class UserBase(BaseModel):
-    username: str  #email
-    password: str 
+    username: Optional[str] = None  #email
+    password: Optional[str] = None 
 
 
 class UserCreate(UserBase):
@@ -23,24 +27,38 @@ class User(UserBase):
 class Token(BaseModel):
     access_token: str
     token_type: str
+    role: str
+    
+# guide fair added    
+class GuideFairBase(BaseModel):
+    guide_id: UUID4  # Assuming guide_id is of type UUID
+    fair_id: int
+    status: Optional[str]  # Can be 'REQUESTED' or 'ASSIGNED'
 
+class GuideFairCreate(GuideFairBase):
+    pass
 
+class GuideFair(GuideFairBase):
+    class Config:
+        from_attributes = True    
+
+# guide tour
 class GuideTourBase(BaseModel):
-    guide_id: Optional[UUID4] = None
-    tour_id: Optional[int] = None
-
+    guide_id: UUID4
+    tour_id: int
+    status: Optional[str]  # Can be 'REQUESTED' or 'ASSIGNED'
 
 class GuideTourCreate(GuideTourBase):
     pass
 
-
 class GuideTour(GuideTourBase):
-    pass
+    class Config:
+        from_attributes = True
 
 
 class PuantajBase(BaseModel):
     guide_id: Optional[UUID4] = None
-    date: date # can be of 'date' type
+    date: Optional[datetime] = None # can be of 'date' type
     time_in: Optional[time] = None
     time_out: Optional[time] = None
     notes: Optional[str] = None
@@ -61,13 +79,13 @@ class TourBase(BaseModel):
     confirmation: Optional[str] = "PENDING"
     high_school_name: Optional[str] = None
     city: Optional[str] = None
-    date: date
+    date: Optional[datetime] = None
     daytime: Optional[str] = None
     student_count: Optional[int] = None
     teacher_name: Optional[str] = None
     teacher_phone_number: Optional[str] = None
     salon: Optional[str] = None
-    form_sent_date: Optional[str] = None
+    form_sent_date: Optional[datetime] = None # might be problematic
     guide_id: Optional[UUID4] = None
     notes: Optional[str] = None
 
@@ -85,8 +103,12 @@ class Tour(TourBase):
 
 class SchoolBase(BaseModel):
     school_name: Optional[str] = None
+    city: Optional[str] = None
     email: Optional[str] = None
-    rate: Optional[int] = None
+    rate: Optional[int] = None  # Ranking [1, 10]
+    user_name: Optional[str] = None
+    user_role: Optional[str] = None
+    user_phone: Optional[str] = None
     notes: Optional[str] = None
 
 
@@ -102,14 +124,13 @@ class School(SchoolBase):
 
 
 class IndividualTourBase(BaseModel):
-    date: date
+    date: Optional[datetime] = None
     daytime: Optional[str] = None
+    high_school_name: Optional[str] = None
     visitor_name: Optional[str] = None
     visitor_email: Optional[str] = None
     visitor_phone: Optional[str] = None
     visitor_count: Optional[int] = None
-    assigned_guide_id: Optional[UUID4] = None
-    tour_type: Optional[str] = None
     notes: Optional[str] = None
 
 
@@ -125,14 +146,15 @@ class IndividualTour(IndividualTourBase):
 
 
 class FairBase(BaseModel):
-    date: date
+    date: datetime
     hour: Optional[str] = None
     high_school_name: Optional[str] = None
     city: Optional[str] = None
     guide_count: Optional[int] = None
-    guide_1_id: Optional[UUID4] = None
-    guide_2_id: Optional[UUID4] = None
-    guide_3_id: Optional[UUID4] = None
+    # guide_1_id: Optional[UUID4] = None
+    # guide_2_id: Optional[UUID4] = None
+    # guide_3_id: Optional[UUID4] = None
+    guides: Optional[List[UUID4]] = None
     confirmation: Optional[str] = "PENDING"
     notes: Optional[str] = None
 
@@ -154,13 +176,13 @@ class AdvisorBase(BaseModel):
     username: str
     phone: Optional[str] = None
     email: Optional[str] = None
-    responsible_day: Optional[str] = None
     profile_picture_url: Optional[str] = None
     emergency_contact_name: Optional[str] = None
     emergency_contact_phone: Optional[str] = None
     start_date: Optional[date] = None
     end_date: Optional[date] = None
-    isactive: Optional[bool] = None
+    isactive: Optional[bool] = True
+    responsible_day: Optional[List[str]] = None  # Store as a list of strings
     notes: Optional[str] = None
     # password: str
 
@@ -202,3 +224,43 @@ class Guide(GuideBase):
 
     class Config:
         from_attributes = True
+        
+        
+# added admin         
+class AdminBase(BaseModel):
+    user_id: UUID4
+    name: Optional[str] = None
+    email: Optional[str]= None
+    phone: Optional[str]= None
+    role: Optional[str] = 'Coordinator'
+    start_date: Optional[date]= None
+    end_date: Optional[date]= None
+    is_active: Optional[bool] = True
+    notes: Optional[str]= None
+
+class AdminCreate(AdminBase):
+    pass
+
+class Admin(AdminBase):
+    id: UUID4
+
+    class Config:
+        from_attributes = True
+            
+        
+ #add notifications       
+        
+class NotificationBase(BaseModel):
+    guide_id: UUID4
+    message: Optional[str]= None
+    seen: Optional[bool] = False
+    created_at: Optional[datetime] = None
+
+class NotificationCreate(NotificationBase):
+    pass
+
+class Notification(NotificationBase):
+    id: int
+
+    class Config:
+        from_attributes = True      
