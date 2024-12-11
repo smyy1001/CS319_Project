@@ -45,7 +45,7 @@ const CustomButton = styled(Button)({
 });
 
 
-const Navigation = () => {
+const Navigation = ({ role }) => {
     const { isAuthenticated, logout } = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
@@ -93,27 +93,112 @@ const Navigation = () => {
                         </IconButton>
                     </Tooltip>
 
+
+
+
                     <div className="nav-bar-tabs">
-                        <Tooltip title="Tüm Turlar Sayfası">
-                            <CustomButton className={`nav-bar-tab-button ${location.pathname === '/tours' ? 'selected' : ''}`} onClick={() => navigate('/tours')}>
-                                Turlar
-                            </CustomButton>
-                        </Tooltip>
-                        <Tooltip title="Tüm Fairler Sayfası">
-                            <CustomButton className={`nav-bar-tab-button ${location.pathname === '/fairs' ? 'selected' : ''}`} onClick={() => navigate('/fairs')}>
-                                Fairler
-                            </CustomButton>
-                        </Tooltip>
-                        <Tooltip title="Tüm Rehberler Sayfası">
-                            <CustomButton className={`nav-bar-tab-button ${location.pathname === '/guides' ? 'selected' : ''}`} onClick={() => navigate('/guides')}>
-                                Rehberler
-                            </CustomButton>
-                        </Tooltip>
+                        {/** if role is school, show accordingly */}
+                        {/* {console.log("role", role)} */}
+                        {role === "school" ? (
+                            <>
+
+                                {/* <Tooltip title="Tüm Turlar Sayfası">
+                                    <CustomButton className={`nav-bar-tab-button ${location.pathname === '/home' ? 'selected' : ''}`} onClick={() => navigate('/home')}>
+                                        Anasayfa
+                                    </CustomButton>
+                                </Tooltip> */}
+
+                                {/* <Tooltip title="Tüm Rehberler Sayfası">
+                                    <CustomButton className={`nav-bar-tab-button ${location.pathname === '/us' ? 'selected' : ''}`} onClick={() => navigate('/us')}>
+                                        İletişim
+                                    </CustomButton>
+                                </Tooltip> */}
+
+
+
+                                <Tooltip title="Tüm Turlar Sayfası">
+                                    <CustomButton className={`nav-bar-tab-button ${location.pathname === '/tours' ? 'selected' : ''}`} onClick={() => navigate('/tours')}>
+                                        Turlar
+                                    </CustomButton>
+                                </Tooltip>
+
+
+                                {/* <Tooltip title="Tüm Fuarlar Sayfası">
+                                    <CustomButton className={`nav-bar-tab-button ${location.pathname === '/fairs' ? 'selected' : ''}`} onClick={() => navigate('/fairs')}>
+                                        Fuarlar
+                                    </CustomButton>
+                                </Tooltip> */}
+
+
+
+                            </>
+
+
+
+                        ) : role === "guide" ? (
+
+                            <>
+                                <Tooltip title="Tüm Turlar Sayfası">
+                                    <CustomButton className={`nav-bar-tab-button ${location.pathname === '/tours' ? 'selected' : ''}`} onClick={() => navigate('/tours')}>
+                                        Turlar
+                                    </CustomButton>
+                                </Tooltip>
+                                <Tooltip title="Tüm Fuarlar Sayfası">
+                                    <CustomButton className={`nav-bar-tab-button ${location.pathname === '/fairs' ? 'selected' : ''}`} onClick={() => navigate('/fairs')}>
+                                        Fuarlar
+                                    </CustomButton>
+                                </Tooltip>
+                                <Tooltip title="Tüm Rehberler Sayfası">
+                                    <CustomButton className={`nav-bar-tab-button ${location.pathname === '/guides' ? 'selected' : ''}`} onClick={() => navigate('/guides')}>
+                                        Rehberler
+                                    </CustomButton>
+                                </Tooltip>
+                            </>
+
+                            // Adminse
+                        ) : (role === "admin" || role === "advisor") ? (
+
+                            <>
+                                <Tooltip title="Tüm Turlar Sayfası">
+                                    <CustomButton className={`nav-bar-tab-button ${location.pathname === '/tours' ? 'selected' : ''}`} onClick={() => navigate('/tours')}>
+                                        Turlar
+                                    </CustomButton>
+                                </Tooltip>
+                                <Tooltip title="Tüm Fuarlar Sayfası">
+                                    <CustomButton className={`nav-bar-tab-button ${location.pathname === '/fairs' ? 'selected' : ''}`} onClick={() => navigate('/fairs')}>
+                                        Fuarlar
+                                    </CustomButton>
+                                </Tooltip>
+                                <Tooltip title="Tüm Rehberler Sayfası">
+                                    <CustomButton className={`nav-bar-tab-button ${location.pathname === '/guides' ? 'selected' : ''}`} onClick={() => navigate('/guides')}>
+                                        Rehberler
+                                    </CustomButton>
+                                </Tooltip>
+                            </>
+                        ) : (
+                            <>
+                                <Tooltip title="Tüm Turlar Sayfası">
+                                    <CustomButton className={`nav-bar-tab-button ${location.pathname === '/tours' ? 'selected' : ''}`} onClick={() => navigate('/tours')}>
+                                        Turlar
+                                    </CustomButton>
+                                </Tooltip>
+                                <Tooltip title="Tüm Fuarlar Sayfası">
+                                    <CustomButton className={`nav-bar-tab-button ${location.pathname === '/fairs' ? 'selected' : ''}`} onClick={() => navigate('/fairs')}>
+                                        Fuarlar
+                                    </CustomButton>
+                                </Tooltip>
+                                <Tooltip title="Tüm Rehberler Sayfası">
+                                    <CustomButton className={`nav-bar-tab-button ${location.pathname === '/guides' ? 'selected' : ''}`} onClick={() => navigate('/guides')}>
+                                        Rehberler
+                                    </CustomButton>
+                                </Tooltip>
+                            </>
+                        )}
                     </div>
 
                     <Tooltip title="Menü">
                         <IconButton className="nav-bar-menu-icon" onClick={handleMenuClick}>
-                            {Boolean(anchorEl2) ? (<MenuOpenIcon style={{ marginRgiht: '10px' }} />): (<MenuIcon style = {{ marginRgiht: '10px' }} />)}
+                            {Boolean(anchorEl2) ? (<MenuOpenIcon style={{ marginRgiht: '10px' }} />) : (<MenuIcon style={{ marginRgiht: '10px' }} />)}
                         </IconButton>
                     </Tooltip>
 

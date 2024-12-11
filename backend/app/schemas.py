@@ -2,11 +2,11 @@ from pydantic import BaseModel, UUID4, Field
 from typing import List, Optional, Dict
 from datetime import date, datetime, time
 
-# Optionals are added in dates. Otherwise Put/Patch requests require date entry, 2 routes would have to be called in that case. 
+# Optionals are added in dates. Otherwise Put/Patch requests require date entry, 2 routes would have to be called in that case.
 # notes body
 class NotesUpdate(BaseModel):
     notes: Optional[str] = None
-    
+
 # Example
 class UserBase(BaseModel):
     username: Optional[str] = None  #email
@@ -27,9 +27,9 @@ class User(UserBase):
 class Token(BaseModel):
     access_token: str
     token_type: str
-    role: str
-    
-# guide fair added    
+    role: str # role can be 'school' , 'guide' , 'admin' , 'advisor'
+
+# guide fair added
 class GuideFairBase(BaseModel):
     guide_id: UUID4  # Assuming guide_id is of type UUID
     fair_id: int
@@ -76,11 +76,11 @@ class Puantaj(PuantajBase):
 
 
 class TourBase(BaseModel):
-    confirmation: Optional[str] = "PENDING"
+    confirmation: Optional[str] = None
     high_school_name: Optional[str] = None
     city: Optional[str] = None
     date: Optional[datetime] = None
-    daytime: Optional[str] = None
+    # daytime: Optional[str] = None
     student_count: Optional[int] = None
     teacher_name: Optional[str] = None
     teacher_phone_number: Optional[str] = None
@@ -88,6 +88,7 @@ class TourBase(BaseModel):
     form_sent_date: Optional[datetime] = None # might be problematic
     guide_id: Optional[UUID4] = None
     notes: Optional[str] = None
+    feedback: Optional[str] = None
 
 
 class TourCreate(TourBase):
@@ -110,6 +111,7 @@ class SchoolBase(BaseModel):
     user_role: Optional[str] = None
     user_phone: Optional[str] = None
     notes: Optional[str] = None
+    user_id: Optional[UUID4] = None  # Foreign key reference to User table
 
 
 class SchoolCreate(SchoolBase):
@@ -151,10 +153,10 @@ class FairBase(BaseModel):
     high_school_name: Optional[str] = None
     city: Optional[str] = None
     guide_count: Optional[int] = None
-    # guide_1_id: Optional[UUID4] = None
-    # guide_2_id: Optional[UUID4] = None
-    # guide_3_id: Optional[UUID4] = None
     guides: Optional[List[UUID4]] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    feedback: Optional[str] = None
     confirmation: Optional[str] = "PENDING"
     notes: Optional[str] = None
 
@@ -172,8 +174,8 @@ class Fair(FairBase):
 
 class AdvisorBase(BaseModel):
     name: Optional[str] = None
-    age: Optional[int] = None
-    username: str
+    # age: Optional[int] = None
+    username: Optional[str] = None
     phone: Optional[str] = None
     email: Optional[str] = None
     profile_picture_url: Optional[str] = None
@@ -184,11 +186,9 @@ class AdvisorBase(BaseModel):
     isactive: Optional[bool] = True
     responsible_day: Optional[List[str]] = None  # Store as a list of strings
     notes: Optional[str] = None
+    user_id: Optional[UUID4] = None  # Foreign key reference to User table
+
     # password: str
-
-
-class AdvisorCreate(AdvisorBase):
-    pass
 
 
 class Advisor(AdvisorBase):
@@ -205,6 +205,8 @@ class GuideBase(BaseModel):
     phone: Optional[str] = None
     email: Optional[str] = None
     guide_rating: Optional[int] = None
+    total_ratings: Optional[int] = None
+    rating_sum: Optional[int] = None
     profile_picture_url: Optional[str] = None
     emergency_contact_name: Optional[str] = None
     emergency_contact_phone: Optional[str] = None
@@ -212,23 +214,23 @@ class GuideBase(BaseModel):
     end_date: Optional[date] = None
     isactive: Optional[bool] = None
     notes: Optional[str] = None
+    user_id: Optional[UUID4] = None  # Foreign key reference to User table
+
     # password: str
 
 
 class GuideCreate(GuideBase):
     pass
 
-
 class Guide(GuideBase):
     id: Optional[UUID4] = None
 
     class Config:
         from_attributes = True
-        
-        
-# added admin         
+
+
+# added admin
 class AdminBase(BaseModel):
-    user_id: UUID4
     name: Optional[str] = None
     email: Optional[str]= None
     phone: Optional[str]= None
@@ -237,19 +239,22 @@ class AdminBase(BaseModel):
     end_date: Optional[date]= None
     is_active: Optional[bool] = True
     notes: Optional[str]= None
+    user_id: Optional[UUID4] = None  # Foreign key reference to User table
+
 
 class AdminCreate(AdminBase):
     pass
 
 class Admin(AdminBase):
     id: UUID4
+    
 
     class Config:
         from_attributes = True
-            
-        
- #add notifications       
-        
+
+
+# add notifications
+
 class NotificationBase(BaseModel):
     guide_id: UUID4
     message: Optional[str]= None
@@ -264,3 +269,7 @@ class Notification(NotificationBase):
 
     class Config:
         from_attributes = True      
+
+
+class AdvisorCreate(BaseModel):
+    days: List[str]

@@ -4,7 +4,7 @@ import { AppBar, Toolbar, Link, Tooltip } from '@mui/material';
 import Navigation from '../Navigation/Navigation';
 import './AppBarComponent.css';
 
-const AppBarComponent = () => {
+const AppBarComponent = ({role}) => {
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -25,7 +25,7 @@ const AppBarComponent = () => {
                     </Tooltip>
                 )}
                 <Toolbar className="styled-right-toolbar">
-                    <Navigation />
+                    <Navigation role = {role} />
                 </Toolbar>
 
             </Toolbar>

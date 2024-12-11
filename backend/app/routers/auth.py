@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 import app.db.models as models
 from app.deps import get_db
 import app.schemas as schemas
-from app.utils import create_access_token, authenticate_user, get_current_user
+from app.utils import create_access_token, authenticate_user, get_current_user, getDetails
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 router = APIRouter()
@@ -29,6 +29,10 @@ def login(
     return {"access_token": access_token, "token_type": "bearer", "role": user.role}
 
 
-@router.get("/me", response_model=schemas.User)
-def read_current_user(current_user: schemas.User = Depends(get_current_user)):
-    return current_user
+@router.get("/me")
+def read_current_user(
+    current_user: schemas.User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    temp = getDetails(db, current_user.id)
+    return {"user": current_user, "details": temp}

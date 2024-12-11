@@ -1,0 +1,68 @@
+.guide {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  border-bottom: 1px solid #e0e0e0; /* Alt çizgi */
+}
+
+.guide-left {
+  display: flex;
+  align-items: center;
+}
+
+.guide-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin-right: 16px;
+}
+
+.guide-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.guide-info h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333333;
+}
+
+.guide-info p {
+  margin: 4px 0;
+  color: #666666;
+  font-size: 14px;
+}
+
+.rating {
+  color: #ffa500; /* Yıldız için altın rengi */
+  font-weight: bold;
+}
+
+.guide-status {
+  color: #666666;
+  font-weight: bold;
+  font-size: 16px;
+  text-align: right;
+  align-self: flex-end;
+}
+
+.guide-status.active {
+  color: green;
+}
+
+.guide-status.inactive {
+  color: red;
+}
+
+.guide-right {
+  gap: 80px;
+  display: flex;
+  flex-direction: column;
+}
+
+.guide-action {
+  display: flex;
+  justify-content: end;
+}

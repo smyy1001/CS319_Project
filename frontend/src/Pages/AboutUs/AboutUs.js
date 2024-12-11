@@ -1,17 +1,15 @@
 import React from "react";
-import Container from "@mui/material/Container";
-import './AboutUs.css';
-
+import "./AboutUs.css";
+import Schedule from "../../Components/Schedule/Schedule";
 
 function AboutUs() {
-
-    return (
-        <Container className="us-main-container">
-            <div className="us-content">
-                <span style={{ fontSize: '30px', fontWeight: 'bold' }}>THE INFO ABOUT "BILKENT ILETIŞIM OFISI" HERE</span>
-            </div>
-        </Container>
-    );
+  return (
+    <div className="main_container">
+      <div className="schedule">
+        <Schedule />
+      </div>
+    </div>
+  );
 }
 
 export default AboutUs;

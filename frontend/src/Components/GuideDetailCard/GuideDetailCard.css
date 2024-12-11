@@ -1,0 +1,55 @@
+.card {
+  padding: 50px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: #fff;
+  padding-top: 10px;
+}
+
+.upPart {
+  display: flex;
+  margin-bottom: 4px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.backButton {
+  border: none;
+  background: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.profileImage {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+
+.name {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.role {
+  font-size: 0.9rem;
+  color: gray;
+}
+
+.rating {
+  font-size: 1rem;
+  color: black;
+}
+
+.details {
+  line-height: 1.6;
+  color: #333;
+}

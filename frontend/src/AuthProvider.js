@@ -33,16 +33,18 @@ export const AuthProvider = ({ children }) => {
             };
             const response = await Axios.post('/api/auth/login', formData, config);
             let accessToken = response.data.access_token;
-            localStorage.setItem("token", accessToken);
-            localStorage.setItem("role", response.data.role);
             Axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-            const data = await Axios.get('/api/auth/me');
-            if (data) {
-                localStorage.setItem('user', JSON.stringify(data));
-                setUser(data);
+            const dataa = await Axios.get('/api/auth/me');
+            // console.log("heree: ", dataa);
+            if (dataa) {
+                localStorage.setItem('user', JSON.stringify(dataa.data.user));
+                localStorage.setItem('details', JSON.stringify(dataa.data.details));
+                localStorage.setItem("token", accessToken);
+                localStorage.setItem("role", response.data.role);
+                setUser(dataa.data.user);
                 return true;
             }
-            throw new Error(data.message);
+            throw new Error(dataa.message);
         } catch (error) {
             console.error('Login failed', error);
             return false;
@@ -50,9 +52,9 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = () => {
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
-        localStorage.removeItem('role');
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
         setUser(null);
     };
 

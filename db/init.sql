@@ -55,9 +55,9 @@ BEGIN
         CREATE TABLE  advisors (
             id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
             user_id UUID REFERENCES users(id) ON DELETE CASCADE,--added
-            age INTEGER,
+            -- age INTEGER,
             name VARCHAR(255),
-            username VARCHAR(255) UNIQUE,
+            username VARCHAR(255),
             password VARCHAR(255), -- to be hashed
             responsible_day VARCHAR(255)[], -- specific day responsibility, PAZARTESİ SALI ÇARŞAMBA PERŞEMBE CUMA CUMARTESİ PAZAR each adviser is responsible for a specific weekday (e.g. Perşembe, cuma)
             --'PAZARTESİ' 'SALI' 'ÇARŞAMBA' 'PERŞEMBE' 'CUMA' 'CUMARTESİ' 'PAZAR'
@@ -83,7 +83,7 @@ BEGIN
     ) THEN
         CREATE TABLE guides (
             id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-            user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+            user_id UUID UNIQUE REFERENCES users(id) ON DELETE CASCADE,
             name VARCHAR(255),
             username VARCHAR(255) UNIQUE,
             password VARCHAR(255),
@@ -91,6 +91,8 @@ BEGIN
             phone VARCHAR(255),
             email VARCHAR(255), -- EMAIL CHECKS SHOULD BE HANDLED
             guide_rating INTEGER, -- rate € [1,10]
+            total_ratings INTEGER, 
+            rating_sum INTEGER,
             profile_picture_url VARCHAR(255),
             emergency_contact_name VARCHAR(255),
             emergency_contact_phone VARCHAR(255),
@@ -115,11 +117,15 @@ BEGIN
             hour VARCHAR(255), -- e.g. 13.00
             high_school_name VARCHAR(255),
             city VARCHAR(255),
+            phone VARCHAR(255),
+            email VARCHAR(255),
             guide_count INTEGER,
+            feedback VARCHAR(255),
             -- guide_1_id UUID REFERENCES guides(id),
             -- guide_2_id UUID REFERENCES guides(id),
             -- guide_3_id UUID REFERENCES guides(id),
             guides UUID[],
+            form_sent_date TIMESTAMP,
             confirmation VARCHAR(255) DEFAULT 'PENDING', -- fair larda direk ONAY RET var sadece
             notes VARCHAR(255)
         );
@@ -183,14 +189,15 @@ BEGIN
             high_school_name VARCHAR(255),
             city VARCHAR(255),
             date TIMESTAMP, -- e.g., 24 August Thursday
-            daytime VARCHAR(255), -- e.g., 13.00 -------------------------------BUNA GEREK YOK!!!
+            -- daytime VARCHAR(255), -- e.g., 13.00 -------------------------------BUNA GEREK YOK!!!
             student_count INTEGER, -- note, additional guides for > 60
             teacher_name VARCHAR(255),
             teacher_phone_number VARCHAR(255),
             salon VARCHAR(255), -- e.g., Mithat Çoruh or empty
             form_sent_date TIMESTAMP, -- tour date should be at least 2 weeks after the form sent date.
             guide_id UUID REFERENCES guides(id),
-            notes VARCHAR(255)
+            notes TEXT,
+            feedback TEXT
         );
     END IF;
     
@@ -219,7 +226,7 @@ BEGIN
         AND table_name = 'guides_tours'
     ) THEN
         CREATE TABLE guides_tours (
-            guide_id UUID REFERENCES guides(id) ON DELETE CASCADE,
+            guide_id UUID REFERENCES guides(user_id) ON DELETE CASCADE,
             tour_id INTEGER REFERENCES tours(id) ON DELETE CASCADE,
             status VARCHAR(255), -- can be REQUESTED or ASSIGNED
             PRIMARY KEY (guide_id, tour_id)

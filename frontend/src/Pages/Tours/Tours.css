@@ -163,6 +163,23 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
+    gap: 3px;
+}
+
+.tours-tour-time {
+    color: #8a8a8a;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 3px;
+}
+
+.tours-tour-datetime {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 15px;
 }
 
 .tours-tour-body {
@@ -204,4 +221,6 @@
 .tour-card-detail-format2 {
     margin-right: 5px;
     font-weight: bold;
+    width: 300px;
+    margin: 5px 0px;
 }

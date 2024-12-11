@@ -33,13 +33,13 @@ function RegisterPage() {
 
             <div className='register-page-img-container'>
                 <div className='register-picture'>
-                    <div className='overlay'></div>
-                    <div className='content'>
+                    {/* <div className='overlay'></div> */}
+                    {/* <div className='content'>
                         <div style={{ textAlign: 'left' }}>
                             <span style={{ fontSize: '80px', fontWeight: 'bold' }}>Merhaba!</span><br />
                             <span style={{ fontSize: '60px' }} >Okulunu Bilkent'le tanıştırmak ve çok daha fazlası için kayıt ol!</span>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
 

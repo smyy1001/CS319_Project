@@ -3,6 +3,9 @@ from passlib.context import CryptContext
 import psycopg2
 from psycopg2 import OperationalError
 import os
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from sqlalchemy.orm import Session
 from dotenv import load_dotenv
 # from pydantic import UUID4
@@ -12,7 +15,9 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi import Security
 import app.db.models as models
 from app.deps import get_db
+from pydantic import UUID4
 import app.schemas as schemas
+
 
 load_dotenv()
 SECRET_KEY = os.getenv("SECRET")
@@ -55,32 +60,32 @@ def create_access_token(data: dict):
     return encoded_jwt
 
 
-
-
 def authenticate_user(db: Session, username: str, password: str):
     user = db.query(models.User).filter(models.User.username == username).first()
     if not user:
         return False
 
-    advisor = db.query(models.Advisor).filter(models.Advisor.user_id == user.id).first()
-    guide = db.query(models.Guide).filter(models.Guide.user_id == user.id).first()
-    school = db.query(models.School).filter(models.School.user_id == user.id).first()
-
+    if not verify_password(password, user.password):
+        return False
+    
     role = 'guide'
+    advisor = db.query(models.Advisor).filter(models.Advisor.user_id == user.id).first()
 
     if advisor:
         role = 'advisor'
-    elif guide:
-        role = 'guide'
-    elif school:
-        role = 'school'
     else:
-        role = 'basic'
+        guide = db.query(models.Guide).filter(models.Guide.user_id == user.id).first()
+        if guide:
+            role = 'guide'
+        else:
+            school = db.query(models.School).filter(models.School.user_id == user.id).first()
+            if school:
+                role = 'school'
+            else:
+                role = 'admin'
 
     user.role = role
 
-    if not verify_password(password, user.password):
-        return False
     return user
 
 
@@ -105,3 +110,48 @@ def get_current_user(
     if user is None:
         raise credentials_exception
     return user
+
+
+def sendEmail(subject, message, receiver_email):
+    # Get credentials securely from environment variables (For now, hardcoded for example)
+    email = "BilkentTO@gmail.com"
+
+    # registera ekle confirmation_code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+    # Create a MIMEMultipart message object to handle both subject and body
+    msg = MIMEMultipart()
+    msg['From'] = email
+    msg['To'] = receiver_email
+    msg['Subject'] = subject
+
+    # Create the email content with proper UTF-8 encoding
+    msg.attach(MIMEText(message, 'plain', 'utf-8'))
+
+    # Set up the SMTP server
+    server = smtplib.SMTP("smtp.gmail.com", 587)
+    server.starttls()
+
+    try:
+        # Login to the email server
+        server.login(email, "dxnj cuqo xyim ooeu")
+
+        # Send the email
+        server.sendmail(email, receiver_email, msg.as_string())
+        print("Email sent successfully!")
+
+    except Exception as e:
+        print(f"Error: {e}")
+
+    finally:
+        server.quit()
+
+
+def getDetails(
+    db: Session, iid: UUID4
+):
+    temp = db.query(models.Guide).filter(models.Guide.user_id == iid).first()
+    if not temp:
+        temp = db.query(models.Advisor).filter(models.Advisor.user_id == iid).first()
+        if not temp:
+            temp = db.query(models.School).filter(models.School.user_id == iid).first()
+
+    return temp

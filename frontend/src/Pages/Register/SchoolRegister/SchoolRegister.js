@@ -144,6 +144,11 @@ const handleFirstStepClick = () => {
         setShowToast(true);
     } 
     else{
+        // try{
+        //     console.log(school)
+        // }catch(error){
+        //     message.error(error)
+        // }
         incStep();
     }
 }
@@ -177,16 +182,14 @@ const onSave = async () => {
     }
     else {
         try{
-
-            console.log("school",school);
             var users = {"username"  : school.email, "password" : school.password};
-            const response2 = await Axios.post("/api/users/add", users);
-            console.log("user", users);
-            school.id = response2.id;
-            const response1 = await Axios.post("/api/schools/add",school);   
             
-            console.log(response1.data);
-            console.log(response2.data);
+            const response2 = await Axios.post("/api/users/add", users);
+            const newSchool = { ...school, "user_id": response2.data.id };
+
+            const response1 = await Axios.post("/api/schools/add", newSchool);  
+            // console.log(response1.data);
+
             clearForm();
 
             navigate('/login');
@@ -204,7 +207,7 @@ const onSave = async () => {
 }
 
 const clearForm = () => {
-    setSchool({"school_name" : "","password":"", "email": "", "city": "","user_name":"","user_role" : "", "user_phone": "","notes" :"" });
+    setSchool({"school_name" : "","password":"", "email": "", "city": "","user_name":"","user_role" : "", "user_phone": "","notes" :""});
 } 
 
         // Auto-hide the modal after 10 seconds when it appears
@@ -252,7 +255,7 @@ const clearForm = () => {
         <div className="school-register-page-outer-container">
            {/* progress bar */}     
             <div className="progress-container" >
-                <ProgressBar className="progress-bar">
+                <ProgressBar className="school-progress-bar">
                     <p style ={{ margin: 0 }} >Devam etmek için tıkla</p>
                 </ProgressBar>
             </div>  

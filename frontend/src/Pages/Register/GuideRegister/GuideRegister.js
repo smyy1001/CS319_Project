@@ -108,17 +108,19 @@ function GuideRegister() {
     };
 
     const handleSave = async () => {
-        // if (step < 3) {
-        //     setStep(step + 1);
-        // }
+        if (step < 3) {
+            setStep(step + 1);
+        }
         // make the backend request here with the inputs
         if (guide.username !== '' && guide.password !== '' && guide.name !== '' && guide.email !== '' && guide.phone !== '') {
             try {
-                const response = await Axios.post('/api/guides/add', guide);
-                const user = { "id": response.data.id, "username": guide.email, "password": guide.password };
+                // guide da ve school da aynı id de generate edersek user table da aynı id li iki kullanıcı olur hata olur hata alıyordum aynen bu sebepten. O yüzden bence önce user hesabı açılmalı, user id si oluşmalı, herksee özel, sonra bu id yi kullanarak özel guide ya da school hesabı açılmalı. tam tersi yani, o yüzden burayı değiştirdim. 
+                const user = {"username": guide.email, "password": guide.password };
                 const response2 = await Axios.post('/api/users/add', user);
-                console.log(response);
-                console.log(response2);
+                const newGuide = { ...guide, "user_id": response2.data.id };
+                const response = await Axios.post('/api/guides/add', newGuide);
+                // console.log(response);
+                // console.log(response2);
                 clearForm();
                 message.success('Rehber başarıyla kaydedildi!');
                 navigate('/login');
@@ -133,7 +135,7 @@ function GuideRegister() {
         else {
             message.error('Lütfen tüm alanları doldurun!');
         }
-        console.log(guide);
+        // console.log(guide);
     };
 
     const handlePreviousStep = () => {

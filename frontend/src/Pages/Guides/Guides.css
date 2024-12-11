@@ -1,0 +1,60 @@
+.main-container {
+  background-color: #f3f3f3;
+  justify-content: space-between;
+  display: flex;
+  height: 100vh !important;
+  width: 100vw;
+  overflow: hidden; /* Main container scrollable olmayacak */
+}
+.left_container {
+  width: 60%; /* Genişliği ihtiyaca göre ayarlayın */
+  margin-right: 40px;
+  margin-top: 100px; /* Üst çubuk ile araya mesafe ekler */
+  margin-left: 20px; /* Sol tarafta biraz boşluk bırakır */
+  margin-bottom: 20px; /* Alt kısımda biraz boşluk bırakır */
+  background-color: white; /* Arka plan rengi */
+  border-radius: 20px; /* Köşeleri hafif yuvarlama */
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Hafif gölge */
+  overflow-y: auto; /* İçeriği aşan kısmı kaydırır */
+}
+.right_container {
+  width: 40%; /* Genişliği ihtiyaca göre ayarlayın */
+  margin-top: 100px; /* Üst çubuk ile araya mesafe ekler */
+  margin-right: 20px; /* Sağ tarafta biraz boşluk bırakır */
+  margin-bottom: 20px; /* Alt kısımda biraz boşluk bırakır */
+  background-color: white; /* Arka plan rengi */
+  border-radius: 20px; /* Köşeleri hafif yuvarlama */
+  padding: 20px;
+  overflow-y: auto; /* Sağ container da kaydırılabilir */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Hafif gölge */
+}
+.custom-line {
+  border: none;
+  border-top: 1px solid black;
+  margin: 10px auto 10px auto; /* Üstte, altta boşluk, ortaya hizalı */
+  width: 80%; /* Çizginin genişliği */
+}
+
+.header-with-search {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative; /* Search icon'u başlık içinde konumlandırmak için gerekli */
+}
+
+.search_icon {
+  position: absolute; /* İkonu tam başlığın soluna yerleştirmek için */
+  left: 10px; /* Container'a göre soldan boşluk */
+  top: 40%; /* Ortalamak için */
+  transform: translateY(-50%); /* Dikeyde tam ortalamak için */
+}
+
+.search-bar {
+  width: 100%;
+  margin-left: 45px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-right: 10px;
+}

@@ -25,10 +25,10 @@ class Advisor(Base):
     __tablename__ = "advisors"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID, ForeignKey("users.id", ondelete="CASCADE"))  # Link to user table
-    age = Column(Integer)
+    # age = Column(Integer)
     name = Column(String(255))
-    username = Column(String(255), unique=True)
-    responsible_day = Column(ARRAY(String(255))) # 'PAZARTESİ' 'SALI' 'ÇARŞAMBA' 'PERŞEMBE' 'CUMA' 'CUMARTESİ' 'PAZAR'
+    username = Column(String(255))
+    responsible_day = Column(ARRAY(String(255)))
     #password = Column(String(255))  # Should be hashed
     phone = Column(String(255))
     email = Column(String(255))
@@ -59,6 +59,8 @@ class Guide(Base):
     end_date = Column(Date, nullable=True)
     isactive = Column(Boolean, default=True)
     notes = Column(Text)
+    total_ratings = Column(Integer, default=0) 
+    rating_sum = Column(Integer, default=0)
 
 
 class Fair(Base):
@@ -69,6 +71,9 @@ class Fair(Base):
     high_school_name = Column(String(255))
     city = Column(String(255))
     guide_count = Column(Integer)
+    phone = Column(String(255))
+    email = Column(String(255))
+    feedback = Column(String(255))
     # guide_1_id = Column(UUID, ForeignKey("guides.id"))
     # guide_2_id = Column(UUID, ForeignKey("guides.id"))
     # guide_3_id = Column(UUID, ForeignKey("guides.id"))
@@ -95,7 +100,7 @@ class IndividualTour(Base):
 class School(Base):
     __tablename__ = "schools"
     id = Column(Integer, primary_key=True)  # SERIAL PRIMARY KEY
-    user_id = Column(UUID, ForeignKey("users.id", ondelete="CASCADE"),nullable =True)  # Foreign key to users table
+    user_id = Column(UUID(as_uuid = True), ForeignKey("users.id", ondelete="CASCADE"),nullable =False)  # Foreign key to users table
     school_name = Column(String(255),nullable =True)  # Name of the school
     city = Column(String(255),nullable =True)  # Name of the city
     email = Column(String(255),nullable =True)  # School's email
@@ -113,14 +118,15 @@ class Tour(Base):
     high_school_name = Column(String(255))
     city = Column(String(255))
     date = Column(DateTime)  # e.g., 24 August Thursday
-    daytime = Column(String(255))  # e.g., 13:00
+    # daytime = Column(String(255))  # e.g., 13:00
     student_count = Column(Integer)
     teacher_name = Column(String(255))
     teacher_phone_number = Column(String(255))
     salon = Column(String(255))  # e.g., Mithat Çoruh or empty
     form_sent_date = Column(DateTime, server_default=func.now())
     guide_id = Column(UUID, ForeignKey("guides.id"))  # How to store array of guides?
-    notes = Column(String(255))
+    notes = Column(Text)
+    feedback = Column(Text)
 
 
 class Puantaj(Base):
@@ -147,7 +153,7 @@ class GuideFair(Base):
 class GuideTour(Base):
     __tablename__ = "guides_tours"
     guide_id = Column(
-        UUID, ForeignKey("guides.id", ondelete="CASCADE"), primary_key=True
+        UUID, ForeignKey("guides.user_id", ondelete="CASCADE"), primary_key=True
     )
     tour_id = Column(
         Integer, ForeignKey("tours.id", ondelete="CASCADE"), primary_key=True

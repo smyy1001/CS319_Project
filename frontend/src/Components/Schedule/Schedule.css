@@ -1,0 +1,101 @@
+/* Main container that holds the schedule component */
+.main_container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center vertically */
+  align-items: center; /* Center horizontally */
+  height: 100vh; /* Full viewport height */
+  width: 100vw; /* Full viewport width */
+  background-color: #f3f3f3; /* Light gray background */
+  overflow: hidden; /* Prevents scrollbars */
+}
+
+/* Schedule component styling */
+.schedule {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 90%; /* Takes 90% of the viewport width */
+  height: 90%; /* Takes 90% of the viewport height */
+  background-color: #ffffff; /* White background */
+  padding: 20px; /* Adds spacing inside the schedule container */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for a polished look */
+  overflow: auto; /* Enables scrolling inside the schedule component */
+}
+
+/* Table styling for schedule */
+#schedule {
+  width: 100%; /* Makes the table responsive */
+  border-collapse: collapse; /* Removes extra spacing between cells */
+}
+
+/* Header (th) and cell (td) styling */
+#schedule th,
+#schedule td {
+  border: 1px solid #ddd; /* Adds borders between cells */
+  padding: 8px; /* Padding for better spacing */
+  text-align: center; /* Centers text */
+}
+
+#schedule th {
+  background-color: #f5f5f5; /* Light gray for header */
+  font-weight: bold;
+}
+
+/* Locked cells styling */
+.locked {
+  background-color: #eaeaea; /* Dim background for locked cells */
+  color: #000; /* Black text color */
+  position: relative; /* Required for pseudo-element */
+}
+
+.locked::after {
+  content: ""; /* Required for pseudo-element */
+  background-image: url("https://cdn-icons-png.flaticon.com/512/61/61457.png"); /* Lock icon URL */
+  background-size: 16px 16px; /* Adjust icon size */
+  background-repeat: no-repeat;
+  position: absolute; /* Position relative to the cell */
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Center the icon */
+  width: 16px;
+  height: 16px; /* Icon dimensions */
+}
+
+/* Default table cell styling */
+#schedule td {
+  border: 1px solid #ddd; /* Adds borders between cells */
+  padding: 8px; /* Padding for better spacing */
+  text-align: center; /* Centers text */
+  cursor: pointer; /* Shows a pointer cursor */
+  background-color: #fff; /* Default background color */
+  transition: background-color 0.2s ease-in-out; /* Smooth transition */
+}
+
+/* Highlight on hover */
+#schedule td:hover {
+  background-color: #f0f0f0; /* Slight gray background on hover */
+}
+
+/* Selected cell styling */
+#schedule td.selected {
+  background-color: #d3d3d3; /* Gray background for selected state */
+  color: #000; /* Black text for better contrast */
+  position: relative;
+}
+
+/* Add lock icon on selected cells */
+#schedule td.selected::after {
+  content: ""; /* Lock icon */
+  background-image: url("https://cdn-icons-png.flaticon.com/512/61/61457.png"); /* Lock icon URL */
+  background-size: 16px 16px; /* Adjust icon size */
+  background-repeat: no-repeat;
+  position: absolute; /* Position relative to the cell */
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Center the icon */
+  width: 16px;
+  height: 16px; /* Icon dimensions */
+}

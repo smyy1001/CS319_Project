@@ -1,0 +1,233 @@
+.fairs-fair-card {
+    border: 1px solid #e0e0e0;
+    padding: 16px;
+    width: 100%;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+.fair-card-tabs-outer-cont {
+    /* display: flex;
+    justify-content: center;
+    flex-direction: column;
+    height: 100%; */
+    width: 100%;
+}
+
+
+.fairs-fair-card:hover {
+    background-color: #f0f3f7;
+}
+
+.fairs-fair-card.non-clickable {
+    border: 1px solid #e0e0e0;
+    padding: 16px;
+    width: 100%;
+    height: 100%;
+    margin-bottom: 0px !important;
+    border-radius: 8px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: default;
+}
+
+.fairs-fair-card.non-clickable:hover {
+    background-color: transparent !important;
+}
+
+.fairs-fair-card-detail-header {
+    color: black;
+    font-size: 30px;
+    height: min-content;
+    font-weight: bold;
+}
+
+.fairs-fair-card-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+    height: min-content;
+    /* background-color: rgb(180, 21, 21); */
+    padding: 15px;
+}
+
+.fairs-fair-card-buttons {
+    margin-top: 10px;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.fairs-fair-card-button {
+    width: 30%;
+    height: 50px;
+    color: white !important;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px !important;
+    font-weight: bold !important;
+    cursor: pointer;
+}
+
+.fairs-fair-card-button.one {
+    background-color: #0047a4 !important;
+}
+
+.fairs-fair-card-button.two {
+    background-color: #ec2f38 !important;
+}
+
+.fairs-fair-card-button.three {
+    background-color: #416d24 !important;
+}
+
+.fairs-fair-card-button.four {
+    background-color: #ac0d0d !important;
+}
+
+.fairs-fair-card-button.one:hover {
+    background-color: #cddef3 !important;
+    color: black !important;
+}
+
+.fairs-fair-card-button.two:hover {
+    background-color: #db9397 !important;
+    color: black !important;
+}
+
+.fairs-fair-card-button.three:hover {
+    background-color: #b5c2ad !important;
+    color: black !important;
+}
+
+.fairs-fair-card-button.four:hover {
+    background-color: #d69e9e !important;
+    color: black !important;
+}
+
+
+.fairs-fair-card-update-guide-update-page-general {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: calc(100% - 25px);
+    /* background-color: rgb(155, 39, 39); */
+}
+
+
+.fair-card-update-page-assigned {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 50%;
+    padding-top: 0px !important;
+    /* background-color: rgb(63, 199, 36); */
+}
+
+
+.fair-card-update-page-req-free {
+    justify-content: space-evenly;
+    display: flex;
+    flex-direction: row;
+    /* justify-content: center; */
+    align-items: flex-start;
+    width: 100%;
+    height: 50%;
+    padding: 0px !important;
+    /* background-color: rgb(127, 212, 109); */
+}
+
+
+/* Guide Tag Styles */
+.guide-tag {
+    display: inline-block;
+    padding: 8px 12px;
+    margin: 5px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 5px;
+}
+
+/* Assigned Guides Style */
+.assigned {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Requested Guides Style */
+.requested {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.requests {
+    display: flex;
+    flex-direction: row;
+}
+
+/* Available Guides Style */
+.available {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+/* Layout Styling for Assigned, Requested, and Available Sections */
+.fairs-fair-card-update-guide-update-page-general {
+    display: flex;
+    flex-direction: column;
+}
+
+.fair-card-update-page-assigned,
+.fair-card-update-page-req-free {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    /* gap: 10px; */
+    padding: 15px;
+}
+
+
+.free-req-guides {
+    display: flex;
+    flex-direction: column;
+    /* background-color: #0c5460; */
+    padding: 15px;
+    border-radius: 10px;
+    height: 100%;
+    width: 45%;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.req-ass-content {
+    overflow-y: auto;
+}
+
+
+.assigned-guides-cont {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.fair-card-edit-fair-input {
+    width: 300px;
+    background-color: #f8f9fa;
+}

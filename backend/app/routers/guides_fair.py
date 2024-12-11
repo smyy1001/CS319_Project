@@ -188,29 +188,23 @@ def past_fairs(guide_id: UUID4, db: Session = Depends(get_db)):
     return past_fairs
 
 
-# Show all fairs assigned to a guide 
+#guides all tours
 @router.get("/all/{guide_id}/", response_model=List[schemas.Fair])
 def show_guide_all_fairs(guide_id: UUID4, db: Session = Depends(get_db)):
-    # Check if guide exists
+    print("giriyorum")
+    #check if guide exists
     db_guide = db.query(models.Guide).filter(models.Guide.id == guide_id).first()
     if not db_guide:
         raise HTTPException(
             status_code=404, detail=f"Verilen guide_id (id = {guide_id}) ile bir rehber bulunamadı."
         )  
-
-    # Retrieve all fairs assigned to the guide
-    assigned_fairs = (
-        db.query(models.Fair)
-        .join(models.GuideFair)
-        .filter(models.GuideFair.guide_id == guide_id, models.GuideFair.status == "ASSIGNED")
-        .all()
-    )
-    
-    # Check if the guide has no assigned fairs
-    if not assigned_fairs:
-        logging.debug(f"Rehber (id = {guide_id}) için atanan fuar bulunamadı.")
-    
-    return assigned_fairs
+    # get the guide's all tours
+    db_fair = db.query(models.Fair).join(models.GuideFair).filter(models.GuideTour.guide_id == guide_id).all()
+    # empty listse log gönderiyoruz
+    if not db_fair:
+        logging.debug(f"guide with id = {guide_id} has no associated tours.")
+    # if we find the (guide-tour) then we are good to go :) return the assignments
+    return db_fair
 
 # show all fairs for a specific guide
 @router.get("/show_all_fairs/{guide_id}/", response_model=List[schemas.Fair])
@@ -235,6 +229,25 @@ def show_all_fairs(guide_id: UUID4, db: Session = Depends(get_db)):
     
     return all_fairs
 
+#TODO
+@router.get("/guides_fairs/{guide_id}/", response_model=List[schemas.GuideFair])
+def show_all_guide_fairs(guide_id: UUID4, db: Session = Depends(get_db)):
+    # Check if guide exists
+    db_guide = db.query(models.Guide).filter(models.Guide.id == guide_id).first()
+    if not db_guide:
+        raise HTTPException(
+            status_code=404, detail=f"Verilen guide_id (id = {guide_id}) ile bir rehber bulunamadı."
+        )  
+    
+    # Get the guide's all tours
+    db_guidefair = db.query(models.GuideFair).filter(models.GuideFair.guide_id == guide_id).all()
+    
+    # Log if no associated tours are found
+    if not db_guidefair:
+        logging.info(f"Guide with id = {guide_id} has no associated tours.")
+    
+    # Return the guide-tour assignments
+    return db_guidefair
 
 # TODO cancel a guide's requested fair
 @router.delete("/cancel_guides_requested_fair/{guide_id}/{fair_id}")
@@ -327,3 +340,9 @@ def delete_fair_request(guide_id: UUID4, fair_id: int, db: Session = Depends(get
     db.commit()
     
     return {"detail": "Fuar talebi başarıyla silindi."}
+
+
+@router.get("/all", response_model=List[schemas.GuideFair])
+def show_all_fairs(db: Session = Depends(get_db)):
+    db_tours = db.query(models.GuideFair).all()
+    return db_tours

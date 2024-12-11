@@ -54,9 +54,9 @@ def show_adviser(adviser_id: UUID4, db: Session = Depends(get_db)):
     db_adviser = db.query(models.Advisor).filter(models.Advisor.id == adviser_id).first()
    
     if not db_adviser:
-        logging.debug("adviser is not found.")
+        logging.debug("advisor is not found.")
         raise HTTPException(
-            status_code=404, detail=f"Verilen adviser_id = {adviser_id} ile bir adviser bulunamadı."
+            status_code=404, detail=f"Verilen advisor_id = {adviser_id} ile bir adviser bulunamadı."
         )
 
     return db_adviser

@@ -16,37 +16,43 @@ router = APIRouter()
 
 
 # request guideness
-# assign guides to specific tours, 
+# assign guides to specific tours,
 # NOTE turns assign's status to 'REQUESTED'. NOTE REMEMBER status can only take "REQUESTED" or "NONE"
 @router.post("/request_guideness/{guide_id}/{tour_id}", response_model=schemas.GuideTour)
 def request_guideness(guide_id: UUID4, tour_id: int, db: Session = Depends(get_db)):
-    #check if guide exists
-    db_guide = db.query(models.Guide).filter(models.Guide.id == guide_id).first()
+    # check if guide exists
+    db_guide = db.query(models.Guide).filter(models.Guide.user_id == guide_id).first()
     if not db_guide:
         raise HTTPException(
             status_code=404, detail="Verilen guide_id ile bir rehber bulunamadı."
         )
-    #check if tour exists
+    # check if tour exists
     db_tour = db.query(models.Tour).filter(models.Tour.id == tour_id).first()
     if not db_tour:
         raise HTTPException(
             status_code=404, detail="Verilen tour_id ile bir tur bulunamadı." # 400 = bad request, 404 not fount
         )    
-    #check if the guide has already been assigned, or requested to the task 
-    db_guidetour = db.query(models.GuideTour).filter(models.GuideTour.guide_id == guide_id, models.GuideTour.tour_id == tour_id).first()
+    # check if the guide has already been assigned, or requested to the task
+    # db_guidetour = db.query(models.GuideTour).filter(models.GuideTour.guide_id == guide_id, models.GuideTour.tour_id == tour_id).first()
+
+    db_guidetour = db.query(models.GuideTour).filter(
+        models.GuideTour.guide_id == guide_id,
+        models.GuideTour.tour_id == tour_id
+    ).first()
     # zaten request atmışsa
     if db_guidetour and (db_guidetour.status == "REQUESTED"):
+    # if guide_has_tour:
         raise HTTPException(
             status_code=409, detail=f"Bu rehber (id = {guide_id}) bu tura (id = {tour_id}) zaten request vermiş." # 409 = conflict
         )
     # tur zaten işleme alınmışsa, ret ya da onay almışsa yani.
-    if (db_tour.confirmation != "PENDING"): # tur 'PENDING' değilse adviser zaten işlemiş demektir, guide a açık değildir.
+    if (db_tour.confirmation != "BTO ONAY"): # tur 'PENDING' değilse adviser zaten işlemiş demektir, guide a açık değildir.
         raise HTTPException(
             status_code=409, detail=f"Bu tur (id = {tour_id})  istek atmaya açık değil, durumu {db_tour.confirmation}" # 409 = conflict
         )      
-    #if eveything works correctly, now we can assign the guide to the tour (add these values to the GuideTour)
+    # if eveything works correctly, now we can assign the guide to the tour (add these values to the GuideTour)
     new_request = models.GuideTour(guide_id = guide_id,tour_id =tour_id, status = "REQUESTED") 
-   
+
     db.add(new_request)
     db.commit()
     db.refresh(new_request)
@@ -56,7 +62,7 @@ def request_guideness(guide_id: UUID4, tour_id: int, db: Session = Depends(get_d
 @router.delete("/cancel_guides_assigned_tour/{guide_id}/{tour_id}")
 def cancel_assigned_tour(guide_id: UUID4, tour_id: int, db: Session = Depends(get_db)):
     # check if guide exists
-    db_guide = db.query(models.Guide).filter(models.Guide.id == guide_id).first()
+    db_guide = db.query(models.Guide).filter(models.Guide.user_id == guide_id).first()
     if not db_guide:
         raise HTTPException(
             status_code=404, detail=f"Verilen guide_id (id = {guide_id}) ile bir rehber bulunamadı."
@@ -89,7 +95,7 @@ def cancel_assigned_tour(guide_id: UUID4, tour_id: int, db: Session = Depends(ge
 @router.delete("/cancel_guides_requested_tour/{guide_id}/{tour_id}")
 def cancel_requested_tour(guide_id: UUID4, tour_id: int, db: Session = Depends(get_db)):
     # check if guide exists
-    db_guide = db.query(models.Guide).filter(models.Guide.id == guide_id).first()
+    db_guide = db.query(models.Guide).filter(models.Guide.user_id == guide_id).first()
     if not db_guide:
         raise HTTPException(
             status_code=404, detail=f"Verilen guide_id (id = {guide_id}) ile bir rehber bulunamadı."
@@ -118,13 +124,12 @@ def cancel_requested_tour(guide_id: UUID4, tour_id: int, db: Session = Depends(g
     return {"detail": "Tur talebi başarıyla iptal edildi."}
 
 
-
-# assign guides to specific tours, 
+# assign guides to specific tours,
 # NOTE turns assign's status to 'ASSIGNED'. NOTE REMEMBER status can only take "REQUESTED" or "NONE"
 @router.post("/assign_guide/{guide_id}/{tour_id}", response_model=schemas.GuideTour)
 def assign_guides(guide_id: UUID4, tour_id: int, db: Session = Depends(get_db)):
     #check if guide exists
-    db_guide = db.query(models.Guide).filter(models.Guide.id == guide_id).first()
+    db_guide = db.query(models.Guide).filter(models.Guide.user_id == guide_id).first()
     if not db_guide:
         raise HTTPException(
             status_code=404, detail="Verilen guide_id ile bir rehber bulunamadı."
@@ -157,19 +162,15 @@ def assign_guides(guide_id: UUID4, tour_id: int, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_assign)
     
-    # Assign'landıktan sonra kalan bütün requestleri silsek daha mı iyi olur? 
-    # TODO
-    db.query(models.GuideTour).filter(
-        models.GuideTour.tour_id == tour_id,
-        models.GuideTour.status == "REQUESTED",
-        models.GuideTour.guide_id != guide_id  # Exclude the current guide
-    ).delete()
+    # Assign'landıktan sonra kalan bütün requestleri silsek daha mı iyi olur? ---HAYIR ÇALIŞMAZ !!
+    # db.query(models.GuideTour).filter(
+    #     models.GuideTour.tour_id == tour_id,
+    #     models.GuideTour.status == "REQUESTED",
+    #     models.GuideTour.guide_id != guide_id  # Exclude the current guide
+    # ).delete()
     
-    db.commit()  # Commit the deletion
+    db.commit() 
     return new_assign
-
-
-
 
 
 # TODO show guide assigns
@@ -177,7 +178,7 @@ def assign_guides(guide_id: UUID4, tour_id: int, db: Session = Depends(get_db)):
 @router.get("/show_guide_assigns/{guide_id}/", response_model=List[schemas.Tour])
 def show_assigned_guides(guide_id: UUID4, db: Session = Depends(get_db)):
     #check if guide exists
-    db_guide = db.query(models.Guide).filter(models.Guide.id == guide_id).first()
+    db_guide = db.query(models.Guide).filter(models.Guide.user_id == guide_id).first()
     if not db_guide:
         raise HTTPException(
             status_code=404, detail=f"Verilen guide_id (id = {guide_id}) ile bir rehber bulunamadı."
@@ -191,14 +192,13 @@ def show_assigned_guides(guide_id: UUID4, db: Session = Depends(get_db)):
     return db_tours
 
 
-
-#ON IT
+# ON IT
 # TODO show guide requests
 # gets the pairs with guide_id AND "REQUESTED" status in GuideTour table.
 @router.get("/show_guide_requests/{guide_id}/", response_model=List[schemas.Tour])
 def show_guide_requests(guide_id: UUID4, db: Session = Depends(get_db)):
     #check if guide exists
-    db_guide = db.query(models.Guide).filter(models.Guide.id == guide_id).first()
+    db_guide = db.query(models.Guide).filter(models.Guide.user_id == guide_id).first()
     if not db_guide:
         raise HTTPException(
             status_code=404, detail=f"Verilen guide_id (id = {guide_id}) ile bir rehber bulunamadı."
@@ -212,7 +212,6 @@ def show_guide_requests(guide_id: UUID4, db: Session = Depends(get_db)):
     return db_tours
 
 
-
 # TODO show UPCOMING (Guide-Tour) Combinations
 # guides UPCOMING tours
 @router.get("/upcoming_tours/{guide_id}/", response_model=List[schemas.Tour])
@@ -221,7 +220,7 @@ def upcoming_tours(guide_id: UUID4, db: Session = Depends(get_db)):
     current_datetime = datetime.now()
     
     #check if guide exists
-    db_guide = db.query(models.Guide).filter(models.Guide.id == guide_id).first()
+    db_guide = db.query(models.Guide).filter(models.Guide.user_id == guide_id).first()
     if not db_guide:
         raise HTTPException(
             status_code=404, detail=f"Verilen guide_id (id = {guide_id}) ile bir rehber bulunamadı."
@@ -247,7 +246,7 @@ def past_tours(guide_id: UUID4, db: Session = Depends(get_db)):
     current_datetime = datetime.now()
     
     #check if guide exists
-    db_guide = db.query(models.Guide).filter(models.Guide.id == guide_id).first()
+    db_guide = db.query(models.Guide).filter(models.Guide.user_id == guide_id).first()
     if not db_guide:
         raise HTTPException(
             status_code=404, detail=f"Verilen guide_id (id = {guide_id}) ile bir rehber bulunamadı."
@@ -266,12 +265,11 @@ def past_tours(guide_id: UUID4, db: Session = Depends(get_db)):
     return upcoming_tours
 
 
-
-#guides all tours
+# guides all tours
 @router.get("/all/{guide_id}/", response_model=List[schemas.Tour])
 def show_guide_all_tours(guide_id: UUID4, db: Session = Depends(get_db)):
     #check if guide exists
-    db_guide = db.query(models.Guide).filter(models.Guide.id == guide_id).first()
+    db_guide = db.query(models.Guide).filter(models.Guide.user_id == guide_id).first()
     if not db_guide:
         raise HTTPException(
             status_code=404, detail=f"Verilen guide_id (id = {guide_id}) ile bir rehber bulunamadı."
@@ -285,11 +283,11 @@ def show_guide_all_tours(guide_id: UUID4, db: Session = Depends(get_db)):
     return db_tour
 
 
-#TODO
+# TODO
 @router.get("/guides_tours/{guide_id}/", response_model=List[schemas.GuideTour])
 def show_all_guide_tours(guide_id: UUID4, db: Session = Depends(get_db)):
     # Check if guide exists
-    db_guide = db.query(models.Guide).filter(models.Guide.id == guide_id).first()
+    db_guide = db.query(models.Guide).filter(models.Guide.user_id == guide_id).first()
     if not db_guide:
         raise HTTPException(
             status_code=404, detail=f"Verilen guide_id (id = {guide_id}) ile bir rehber bulunamadı."
@@ -311,7 +309,7 @@ def show_all_guide_tours(guide_id: UUID4, db: Session = Depends(get_db)):
 @router.get("/show/{guide_id}/{tour_id}", response_model=schemas.GuideTour)
 def show_one_tour(guide_id: UUID4, tour_id: int, db: Session = Depends(get_db)):
     #check if guide exists
-    db_guide = db.query(models.Guide).filter(models.Guide.id == guide_id).first()
+    db_guide = db.query(models.Guide).filter(models.Guide.user_id == guide_id).first()
     if not db_guide:
         raise HTTPException(
             status_code=404, detail=f"Verilen guide_id (id = {guide_id}) ile bir rehber bulunamadı."
@@ -332,7 +330,7 @@ def show_one_tour(guide_id: UUID4, tour_id: int, db: Session = Depends(get_db)):
     return db_guidetour
 
 
-#get all
+# get all
 @router.get("/all", response_model=List[schemas.GuideTour])
 def show_all_tours(db: Session = Depends(get_db)):
     db_tours = db.query(models.GuideTour).all()
